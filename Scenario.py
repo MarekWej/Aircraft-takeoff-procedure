@@ -86,3 +86,22 @@ class Scenario(Pilot, Aircraft):
                           self.hydraulicsSystem.lower() == 'true']
 
 
+        try:
+            if all(inputsAircraft):
+                print('Wait for the verification process...')
+                time.sleep(2)
+                print("Success!!!")
+                print('-' * 100)
+            elif all([not i for i in inputsAircraft]):
+                print('Error!!!')
+            else:
+                print("Error: wrong values!!!")
+                raise SystemExit
+
+            if all(inputsAircraft):
+                pass
+            else:
+                return inputsAircraft
+
+        except KeyboardInterrupt:
+            print("Program interrupted by user.")

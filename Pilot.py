@@ -9,9 +9,3 @@ class Pilot():
         self.calm = calm
         self.focus = focus
 
-    def CheckStatusPilot(self):
-            if self.healthy and self.rested and self.full and self.calm and self.focus == str('True'):
-                print('Check completed successfully')
-                print('-'*100)
-            else:
-                print('Error in the security process!!!!')

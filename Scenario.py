@@ -18,17 +18,17 @@ class Scenario(Pilot, Aircraft):
 
     def RunScenario(self):
         print('Hi')
-        time.sleep(2)
+        #time.sleep(2)
         print('I am your on-board computer')
-        time.sleep(5)
-        print('Today is {}'.format(time.strftime("%m/%d/%Y, %H:%M", time.localtime())))
-        time.sleep(4)
+        #time.sleep(5)
+        print('Today is: {}'.format(time.strftime("%d/%m/%Y, %H:%M", time.localtime())))
+        #time.sleep(4)
         print('We are going to {}'.format(self.random_direction()))
-        time.sleep(2)
-        print('The weather for today is {}'.format(self.random_weather()))
-        time.sleep(3)
+        #time.sleep(2)
+        print("Today's weather is: {}".format(self.random_weather()))
+        #time.sleep(3)
         print('Lets prepare you for the flight, for this purpose I have to ask you a few questions')
-        time.sleep(5)
+        #time.sleep(5)
         print('Remember, the answers are only True or False')
 
         self.SetStatusPilot()
@@ -53,15 +53,15 @@ class Scenario(Pilot, Aircraft):
         try:
             if all(inputsPilot):
                 print('Wait for the verification process...')
-                time.sleep(2)
+                #time.sleep(2)
                 print("Success!!!")
                 print('-' * 100)
-                time.sleep(2)
+                #time.sleep(2)
                 print('Now I have to ask you about the technical condition of the aircraft')
             elif all([not i for i in inputsPilot]):
-                print("Error!!!")
-            else:
                 print("Error: wrong values!!!")
+            else:
+                print("Error: Security check is failed")
                 raise SystemExit
 
             if all(inputsPilot):
@@ -89,19 +89,78 @@ class Scenario(Pilot, Aircraft):
         try:
             if all(inputsAircraft):
                 print('Wait for the verification process...')
-                time.sleep(2)
+                #time.sleep(2)
                 print("Success!!!")
                 print('-' * 100)
             elif all([not i for i in inputsAircraft]):
-                print('Error!!!')
-            else:
                 print("Error: wrong values!!!")
+            else:
+                print("Error: Security check failed")
                 raise SystemExit
 
             if all(inputsAircraft):
-                pass
+                self.LaunchSequence_info()
             else:
                 return inputsAircraft
 
         except KeyboardInterrupt:
             print("Program interrupted by user.")
+
+    def LaunchSequence_info(self):
+        options = {
+            "1": "Air traffic control tower",
+            "2": "Passengers",
+            "3": "Second pilot"
+        }
+        current_answer = "Air traffic control tower"
+        user_choice = input(
+            "We want to ask for permission to take off, who do we need to notify?\n1. Air traffic control tower\n2. "
+            "Passengers\n3. Second pilot\nSelect the option: ").strip().lower()
+        if user_choice in options:
+            if options[user_choice] == current_answer:
+                time.sleep(2)
+                print("Yes sir - I am informing the air traffic control tower of my intention to take off.")
+                print("-"*100)
+                time.sleep(2)
+                self.LaunchSequence_collisionLights()
+            else:
+                print("Wrong answer!!!")
+                time.sleep(2)
+                print("Let's try again")
+                self.LaunchSequence_info()
+        else:
+            print("Incorrect selection option!!!")
+            time.sleep(2)
+            print("Let's try again")
+            self.LaunchSequence_info()
+
+    def LaunchSequence_collisionLights(self):
+        options = {
+            "1": "Including engines",
+            "2": "Turn on blinking collision lights",
+            "3": "Hide the landing gear of the aircraft"
+        }
+
+        current_answer = "Turn on blinking collision lights"
+        user_choice = input(
+            "We need to let everyone around us know that we are starting the launch sequence. What do we need to do?\n1."
+            "Including engines\n2. Turn on blinking collision lights\n3. Hide the landing gear of the aircraft\nSelect the option: "
+        ).strip().lower()
+
+        if user_choice in options:
+            if options[user_choice] == current_answer:
+                time.sleep(2)
+                print("That's right, I turn on the collision lights. They appear to be blinking. ")
+            else:
+                print("Wrong answer!!!")
+                time.sleep(2)
+                print("Let's try again")
+                self.LaunchSequence_collisionLights()
+        else:
+            print("Incorrect selection option!!!")
+            time.sleep(2)
+            print("Let's try again")
+            self.LaunchSequence_collisionLights()
+
+
+

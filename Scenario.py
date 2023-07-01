@@ -14,6 +14,7 @@ class Scenario(Pilot, Aircraft):
         Aircraft.__init__(self, fuel, engines, lights, collisionLights, rudders, hydraulicsSystem)
         self.scenario_inputsPilot = []
         self.scenario_inputsAircraft = []
+        self.city = self.random_direction()
 
 
     def RunScenario(self):
@@ -23,7 +24,7 @@ class Scenario(Pilot, Aircraft):
         #time.sleep(5)
         print('Today is: {}'.format(time.strftime("%d/%m/%Y, %H:%M", time.localtime())))
         #time.sleep(4)
-        print('We are going to {}'.format(self.random_direction()))
+        print('We are going to {}'.format(self.city))
         #time.sleep(2)
         print("Today's weather is: {}".format(self.random_weather()))
         #time.sleep(3)
@@ -199,11 +200,15 @@ class Scenario(Pilot, Aircraft):
                 print("Of course, I'm starting to run engine #1")
                 time.sleep(4)
                 print("Engine #1 has warmed up, I am starting to start engine #2")
+                time.sleep(2)
                 print("-"*100)
                 time.sleep(4)
                 print("Pilot, we are now taxiing...")
                 time.sleep(4)
                 print("We are gaining launch speed...")
+                time.sleep(3)
+                print("Pilot, the plane's takeoff was successful, I'm taking a course to {}".format(self.city))
+                self.RandomDirection()
 
             else:
                 print("Wrong answer!!!")
@@ -220,8 +225,49 @@ class Scenario(Pilot, Aircraft):
             time.sleep(2)
             self.LaunchSequence_engines()
 
+    def RandomDirection(self):
+        if self.city == 'Tokyo':
+            options = {
+                "1": "Notify the flight control station",
+                "2": "Notify passengers of the problem",
+                "3": "Create a panic"
+            }
+
+            current_answer = ["Notify the flight control station", "Notify passengers of the problem"]
+            user_choice = input(
+                "it seems that something is wrong with engine #1, its power has dropped, we are almost there, "
+                "we are already above the city, what should we do?\n1. Notify the flight control station"
+                "\n2. Notify passengers of the problem\n3. Increase the power of engine #2\n"
+                "Select the option: ").strip().lower()
+
+            if user_choice == "1 2" or user_choice == "2 1":
+                time.sleep(2)
+                print("Yes sir, pilot, I am notifying the flight control station and passengers of the problem that has arisen")
+                print('-' * 100)
+                time.sleep(3)
+            elif user_choice in options:
+                if options[user_choice] in current_answer:
+                    time.sleep(2)
+                    print("Executes: ", options[user_choice], "But we need to do something else ")
+                    print("-" * 100)
+                    time.sleep(2)
+                    print("Let's try again")
+                    self.RandomDirection()
+                else:
+                    print("Wrong answer!!!")
+                    time.sleep(2)
+                    print("Let's try again")
+                    self.RandomDirection()
+        else:
+            print("Incorrect selection option!!!")
+            time.sleep(2)
+            print("Let's try again")
+            self.RandomDirection()
 
 
 
 
+
+
+    
 

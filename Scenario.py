@@ -1,5 +1,7 @@
 import time
 import random
+import threading
+
 from Pilot import Pilot
 from Aircraft import Aircraft
 
@@ -119,28 +121,28 @@ class Scenario(Pilot, Aircraft):
             "Passengers\n3. Second pilot\nSelect the option: ").strip().lower()
 
         if user_choice == "1 2" or user_choice == "2 1":
-            time.sleep(2)
+            #time.sleep(2)
             print("Yes sir - I am informing the air traffic control tower and passengers of my intention to take off.")
             print("-" * 100)
-            time.sleep(2)
+            #time.sleep(2)
             self.LaunchSequence_collisionLights()
         elif user_choice in options:
             if options[user_choice] in current_answer:
-                time.sleep(2)
+                #time.sleep(2)
                 print("Yes sir - I am informing the", options[user_choice], "of my intention to take off, But we need "
                                                                             "to inform someone else too")
                 print("-" * 100)
-                time.sleep(2)
+                #time.sleep(2)
                 print("Let's try again")
                 self.LaunchSequence_info()
             else:
                 print("Wrong answer!!!")
-                time.sleep(2)
+                #time.sleep(2)
                 print("Let's try again")
                 self.LaunchSequence_info()
         else:
             print("Incorrect selection option!!!")
-            time.sleep(2)
+            #time.sleep(2)
             print("Let's try again")
             self.LaunchSequence_info()
 
@@ -160,24 +162,24 @@ class Scenario(Pilot, Aircraft):
 
         if user_choice in options:
             if options[user_choice] == current_answer:
-                time.sleep(2)
+                #time.sleep(2)
                 print("That's right, I turn on the collision lights. They appear to be blinking. ")
                 print('-'*100)
-                time.sleep(2)
+                #time.sleep(2)
                 self.LaunchSequence_engines()
             else:
                 print("Wrong answer!!!")
-                time.sleep(2)
+                #time.sleep(2)
                 print("Let's try again")
                 print('*'*100)
-                time.sleep(2)
+                #time.sleep(2)
                 self.LaunchSequence_collisionLights()
         else:
             print("Incorrect selection option!!!")
-            time.sleep(2)
+            #time.sleep(2)
             print("Let's try again")
             print('*' * 100)
-            time.sleep(2)
+            #time.sleep(2)
             self.LaunchSequence_collisionLights()
 
 
@@ -196,74 +198,146 @@ class Scenario(Pilot, Aircraft):
 
         if user_choice in options:
             if options[user_choice] == current_answer:
-                time.sleep(2)
+                #time.sleep(2)
                 print("Of course, I'm starting to run engine #1")
-                time.sleep(4)
+                #time.sleep(4)
                 print("Engine #1 has warmed up, I am starting to start engine #2")
-                time.sleep(2)
+                #time.sleep(2)
                 print("-"*100)
-                time.sleep(4)
+                #time.sleep(4)
                 print("Pilot, we are now taxiing...")
-                time.sleep(4)
+                #time.sleep(4)
                 print("We are gaining launch speed...")
-                time.sleep(3)
+                #time.sleep(3)
                 print("Pilot, the plane's takeoff was successful, I'm taking a course to {}".format(self.city))
-                self.RandomDirection()
+                print('-'*100)
+                print('(AT THIS STAGE AN ERROR COUNTER IS INTRODUCED, THINK TWICE BEFORE GIVING YOUR ANSWER)')
+                print('-'*100)
+                self.Directions()
 
             else:
                 print("Wrong answer!!!")
-                time.sleep(2)
+                #time.sleep(2)
                 print("Let's try again")
                 print('*' * 100)
-                time.sleep(2)
+                #time.sleep(2)
                 self.LaunchSequence_engines()
         else:
             print("Incorrect selection option!!!")
-            time.sleep(2)
+            #time.sleep(2)
             print("Let's try again")
             print('*' * 100)
-            time.sleep(2)
+            #time.sleep(2)
             self.LaunchSequence_engines()
 
-    def RandomDirection(self):
-        if self.city == 'Tokyo':
-            options = {
-                "1": "Notify the flight control station",
-                "2": "Notify passengers of the problem",
-                "3": "Create a panic"
-            }
+    def Directions(self):
+        continue_execution = True
+        error_count = 0
 
-            current_answer = ["Notify the flight control station", "Notify passengers of the problem"]
-            user_choice = input(
-                "it seems that something is wrong with engine #1, its power has dropped, we are almost there, "
-                "we are already above the city, what should we do?\n1. Notify the flight control station"
-                "\n2. Notify passengers of the problem\n3. Increase the power of engine #2\n"
-                "Select the option: ").strip().lower()
+        # Direction - Tokyo
+        while continue_execution:
+            if self.city == 'Tokyo':
+                options = {
+                    "1": "Notify the flight control station",
+                    "2": "Notify passengers of the problem",
+                    "3": "Create a panic"
+                }
 
-            if user_choice == "1 2" or user_choice == "2 1":
-                time.sleep(2)
-                print("Yes sir, pilot, I am notifying the flight control station and passengers of the problem that has arisen")
-                print('-' * 100)
-                time.sleep(3)
-            elif user_choice in options:
-                if options[user_choice] in current_answer:
-                    time.sleep(2)
-                    print("Executes: ", options[user_choice], "But we need to do something else ")
-                    print("-" * 100)
-                    time.sleep(2)
-                    print("Let's try again")
-                    self.RandomDirection()
+                current_answer = ["Notify the flight control station", "Notify passengers of the problem"]
+                user_choice = input(
+                    "It seems that something is wrong with engine #1, its power has dropped. We are almost there, "
+                    "above the city. What should we do?\n1. Notify the flight control station"
+                    "\n2. Notify passengers of the problem\n3. Increase the power of engine #2\n"
+                    "Select the option: ").strip().lower()
+
+                if user_choice == "1 2" or user_choice == "2 1":
+                    print(
+                        "Yes, sir. I am notifying the flight control station and passengers of the problem that has arisen.")
+                    print('-' * 100)
+                    continue_execution = False
+
+                elif user_choice in options:
+                    if options[user_choice] in current_answer:
+                        print('-'*100)
+                        print("Executes:", options[user_choice], "but we need to do something else.")
+                        error_count += 1
+                        print('-' * 100)
+                        print("Wrong answers = {}/3".format(error_count))
+                        print('-' * 100)
+                        print("Let's try again.")
+                        print('-' * 100)
+                    else:
+                        error_count += 1
+                        print("Wrong answers = {}/3".format(error_count))
+                        print('-' * 100)
+
+                        if error_count >= 3:
+                            print("You have exceeded the maximum number of incorrect answers. Exiting.")
+                            print("Wrong answers = {}/3".format(error_count))
+                            return
+                        print("Let's try again.")
+                        time.sleep(2)
                 else:
-                    print("Wrong answer!!!")
+                    error_count += 1
+                    print('-' * 100)
+                    print("Wrong answers = {}/3".format(error_count))
+                    print('-' * 100)
+                    if error_count >= 3:
+                        print("You have exceeded the maximum number of incorrect answers. Exiting.")
+                        print("Wrong answers = {}/3".format(error_count))
+                        return
+                    print("Incorrect selection option!!!")
+                    print("Let's try again.")
                     time.sleep(2)
-                    print("Let's try again")
-                    self.RandomDirection()
-        else:
-            print("Incorrect selection option!!!")
-            time.sleep(2)
-            print("Let's try again")
-            self.RandomDirection()
 
+            # Direction - Warsaw
+            elif self.city == "Warsaw":
+                options = {
+                    "1": "Lock the cockpit door and continue flying to the designated destination",
+                    "2": "Neutralize the terrorists at all costs",
+                    "3": "Negotiate with terrorists"
+                }
+                current_answer = "Lock the cockpit door and continue flying to the designated destination"
+                user_choice = input(
+                    "Passengers started shouting that there were terrorists on the plane. What should we do?\n1. "
+                    "Lock the cockpit door and continue flying to the designated destination\n2. "
+                    "Neutralize the terrorists at all costs\n3. Negotiate with terrorists\nSelect the option: ").strip()
+
+                if user_choice in options:
+                    if options[user_choice] == current_answer:
+                        print("That's right, pilot! Close the door immediately!!!")
+                        print('-' * 100)
+                        break
+                    else:
+                        error_count += 1
+                        print('-' * 100)
+                        print("Wrong answers = {}/3".format(error_count))
+                        print('-' * 100)
+                        if error_count >= 3:
+                            print("You have exceeded the maximum number of incorrect answers. Exiting.")
+                            return
+                        print("Let's try again.")
+                        print('-' * 100)
+                else:
+                    error_count += 1
+                    print('-' * 100)
+                    print("Wrong answers = {}/3".format(error_count))
+                    print('-' * 100)
+                    if error_count >= 3:
+                        print("You have exceeded the maximum number of incorrect answers. Exiting.")
+                        print("Wrong answers = {}/3".format(error_count))
+                        return
+                    print("Incorrect selection option!!!")
+                    print("Let's try again.")
+                    print('-' * 100)
+            else:
+                error_count += 1
+                if error_count >= 3:
+                    print("You have exceeded the maximum number of incorrect answers. Exiting.")
+                    print("Wrong answers = {}/3".format(error_count))
+                    return
+                print("Incorrect selection option!!!")
+                print("Let's try again.")
 
 
 

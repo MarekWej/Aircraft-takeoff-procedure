@@ -3,6 +3,7 @@ import random
 
 from Pilot import Pilot
 from Aircraft import Aircraft
+from tkinter import *
 
 class Scenario(Pilot, Aircraft):
 
@@ -42,108 +43,153 @@ class Scenario(Pilot, Aircraft):
         return random.choice(self.weather)
 
     def SetStatusPilot(self):
-        self.healthy = input('Do you feel healthy? (True/False) ')
-        self.rested = input('Do you feel rested? (True/False) ')
-        self.full = input('Do you feel full? (True/False) ')
-        self.calm = input('Are you calm? (True/False) ')
-        self.focus = input('Are you focused? (True/False) ')
+        root = Tk()
+        root.title("Pilot Status")
+        root.geometry("600x400")
 
-        inputsPilot = [self.healthy.lower() == 'true', self.rested.lower() == 'true', self.full.lower() == 'true',
-                       self.calm.lower() == 'true',
-                       self.focus.lower() == 'true']
+        status_frame = Frame(root)
+        status_frame.pack(pady=20)
 
-        try:
-            if all(inputsPilot):
+        questions = ["Do you feel healthy?", "Do you feel rested?", "Do you feel full?", "Are you calm?",
+                     "Are you focused?"]
+        answers = []
+        for i in range(len(questions)):
+            var = BooleanVar()
+            question_label = Label(status_frame, text=questions[i])
+            question_label.pack()
+            answer_entry = Checkbutton(status_frame, variable=var)
+            answer_entry.pack()
+            answers.append(var)
+
+        def submit_status():
+            self.healthy = answers[0].get()
+            self.rested = answers[1].get()
+            self.full = answers[2].get()
+            self.calm = answers[3].get()
+            self.focus = answers[4].get()
+
+            if all(answers):
                 print('Wait for the verification process...')
-                #time.sleep(2)
+                time.sleep(2)
                 print("Success!!!")
                 print('-' * 100)
-                #time.sleep(2)
+                time.sleep(2)
                 print('Now I have to ask you about the technical condition of the aircraft')
-            elif all([not i for i in inputsPilot]):
-                print("Error: wrong values!!!")
-            else:
-                print("Error: Security check is failed")
-                raise SystemExit
-
-            if all(inputsPilot):
+                root.destroy()
                 self.SetStatusAircraft()
-            else:
-                return inputsPilot
-
-        except KeyboardInterrupt:
-            print("Program interrupted by user.")
-
-
-    def SetStatusAircraft(self):
-        self.fuel = input('Is the fuel tank dueled? (True/False)')
-        self.engines = input('Are all engines operational? (True/False)')
-        self.lights = input('Do the lights work? (True/False)')
-        self.collisionLights = input('Do the collision lights work? (True/False)')
-        self.rudders = input('Are the controllers working? (True/False)')
-        self.hydraulicsSystem = input('Are the hydraulic systems working well? (True/False)')
-
-        inputsAircraft = [self.fuel.lower() == 'true', self.engines.lower() == 'true', self.lights.lower() == 'true',
-                          self.collisionLights.lower() == 'true', self.rudders.lower() == 'true',
-                          self.hydraulicsSystem.lower() == 'true']
-
-
-        try:
-            if all(inputsAircraft):
-                print('Wait for the verification process...')
-                #time.sleep(2)
-                print("Success!!!")
-                print('-' * 100)
-            elif all([not i for i in inputsAircraft]):
-                print("Error: wrong values!!!")
             else:
                 print("Error: Security check failed")
                 raise SystemExit
 
-            if all(inputsAircraft):
+        submit_button = Button(root, text="Submit", command=submit_status)
+        submit_button.pack()
+
+        root.mainloop()
+
+
+    def SetStatusAircraft(self):
+        root = Tk()
+        root.title("Aircraft Status")
+        root.geometry("600x400")
+
+        status_frame = Frame(root)
+        status_frame.pack(pady=20)
+
+        questions = ["Is the fuel tank fueled?", "Are all engines operational?", "Do the lights work?",
+                     "Do the collision lights work?",
+                     "Are the controllers working?", "Are the hydraulic systems working well?"]
+        answers = []
+        for i in range(len(questions)):
+            var = BooleanVar()
+            question_label = Label(status_frame, text=questions[i])
+            question_label.pack()
+            answer_entry = Checkbutton(status_frame, variable=var)
+            answer_entry.pack()
+            answers.append(var)
+
+        def submit_status():
+            self.fuel = answers[0].get()
+            self.engines = answers[1].get()
+            self.lights = answers[2].get()
+            self.collisionLights = answers[3].get()
+            self.rudders = answers[4].get()
+            self.hydraulicsSystem = answers[5].get()
+
+            if all(answers):
+                print('Wait for the verification process...')
+                time.sleep(2)
+                print("Success!!!")
+                print('-' * 100)
+                root.destroy()
                 self.LaunchSequence_info()
             else:
-                return inputsAircraft
+                print("Error: Security check failed")
+                raise SystemExit
 
-        except KeyboardInterrupt:
-            print("Program interrupted by user.")
+        submit_button = Button(root, text="Submit", command=submit_status)
+        submit_button.pack()
+
+        root.mainloop()
 
     def LaunchSequence_info(self):
+        root = Tk()
+        root.title("Launch Sequence Info")
+        root.geometry("400x300")
+
+        info_frame = Frame(root)
+        info_frame.pack(pady=20)
+
+        question_label = Label(info_frame, text="We want to ask for permission to take off, who do we need to notify?")
+        question_label.pack()
+
         options = {
             "1": "Air traffic control tower",
             "2": "Passengers",
             "3": "Second pilot"
         }
         current_answer = ["Air traffic control tower", "Passengers"]
-        user_choice = input(
-            "We want to ask for permission to take off, who do we need to notify?\n1. Air traffic control tower\n2. "
-            "Passengers\n3. Second pilot\nSelect the option: ").strip().lower()
 
-        if user_choice == "1 2" or user_choice == "2 1":
-            #time.sleep(2)
-            print("Yes sir - I am informing the air traffic control tower and passengers of my intention to take off.")
-            print("-" * 100)
-            #time.sleep(2)
-            self.LaunchSequence_collisionLights()
-        elif user_choice in options:
-            if options[user_choice] in current_answer:
-                #time.sleep(2)
-                print("Yes sir - I am informing the", options[user_choice], "of my intention to take off, But we need "
-                                                                            "to inform someone else too")
+        var1 = BooleanVar()
+        option1 = Checkbutton(info_frame, text=options["1"], variable=var1)
+        option1.pack()
+
+        var2 = BooleanVar()
+        option2 = Checkbutton(info_frame, text=options["2"], variable=var2)
+        option2.pack()
+
+        var3 = BooleanVar()
+        option3 = Checkbutton(info_frame, text=options["3"], variable=var3)
+        option3.pack()
+
+        def submit_info():
+            choice = []
+            if var1.get():
+                choice.append(options["1"])
+            if var2.get():
+                choice.append(options["2"])
+            if var3.get():
+                choice.append(options["3"])
+
+            if choice == current_answer:
+                print(
+                    "Yes sir - I am informing the air traffic control tower and passengers of my intention to take off.")
                 print("-" * 100)
-                #time.sleep(2)
-                print("Let's try again")
-                self.LaunchSequence_info()
-            else:
+                root.destroy()
+                self.LaunchSequence_collisionLights()
+            elif choice:
                 print("Wrong answer!!!")
-                #time.sleep(2)
                 print("Let's try again")
-                self.LaunchSequence_info()
-        else:
-            print("Incorrect selection option!!!")
-            #time.sleep(2)
-            print("Let's try again")
-            self.LaunchSequence_info()
+                print('*' * 100)
+            else:
+                print("No option selected!!!")
+                print("Let's try again")
+                print('*' * 100)
+
+        submit_button = Button(root, text="Submit", command=submit_info)
+        submit_button.pack()
+
+        root.mainloop()
+
 
     def LaunchSequence_collisionLights(self):
         options = {
@@ -372,7 +418,6 @@ class Scenario(Pilot, Aircraft):
                     print('-' * 100)
 
             # Direction - "Baghdad"
-
             elif self.city == "Baghdad":
                 options = {
                     "1": "We're landing on the water, and notify the air traffic control tower of the decision taken",

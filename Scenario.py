@@ -1,3 +1,5 @@
+import sys
+import os
 import time
 import random
 
@@ -44,8 +46,8 @@ class Scenario(Pilot, Aircraft):
 
     def SetStatusPilot(self):
         root = Tk()
-        root.title("Pilot Status")
-        root.geometry("600x400")
+        root.title("Pilot status")
+        root.geometry("600x450")
 
         status_frame = Frame(root)
         status_frame.pack(pady=20)
@@ -54,21 +56,24 @@ class Scenario(Pilot, Aircraft):
                      "Are you focused?"]
         answers = []
         for i in range(len(questions)):
-            var = BooleanVar()
+            var = IntVar()
+            var.set(-1)  # Initial value -1, so that no option is selected
             question_label = Label(status_frame, text=questions[i])
             question_label.pack()
-            answer_entry = Checkbutton(status_frame, variable=var)
-            answer_entry.pack()
+            yes_option = Radiobutton(status_frame, text="Yes", variable=var, value=1)
+            yes_option.pack()
+            no_option = Radiobutton(status_frame, text="No", variable=var, value=0)
+            no_option.pack()
             answers.append(var)
 
         def submit_status():
-            self.healthy = answers[0].get()
-            self.rested = answers[1].get()
-            self.full = answers[2].get()
-            self.calm = answers[3].get()
-            self.focus = answers[4].get()
+            self.healthy = answers[0].get() == 1
+            self.rested = answers[1].get() == 1
+            self.full = answers[2].get() == 1
+            self.calm = answers[3].get() == 1
+            self.focus = answers[4].get() == 1
 
-            if all(answers):
+            if all(answer.get() != 0 for answer in answers):
                 print('Wait for the verification process...')
                 time.sleep(2)
                 print("Success!!!")
@@ -79,18 +84,19 @@ class Scenario(Pilot, Aircraft):
                 self.SetStatusAircraft()
             else:
                 print("Error: Security check failed")
-                raise SystemExit
+                root.destroy()
+                time.sleep(1)
+                self.SetStatusPilot()
 
         submit_button = Button(root, text="Submit", command=submit_status)
         submit_button.pack()
 
         root.mainloop()
 
-
     def SetStatusAircraft(self):
         root = Tk()
-        root.title("Aircraft Status")
-        root.geometry("600x400")
+        root.title("Aircraft status")
+        root.geometry("600x550")
 
         status_frame = Frame(root)
         status_frame.pack(pady=20)
@@ -100,22 +106,25 @@ class Scenario(Pilot, Aircraft):
                      "Are the controllers working?", "Are the hydraulic systems working well?"]
         answers = []
         for i in range(len(questions)):
-            var = BooleanVar()
+            var = IntVar()
+            var.set(-1)
             question_label = Label(status_frame, text=questions[i])
             question_label.pack()
-            answer_entry = Checkbutton(status_frame, variable=var)
-            answer_entry.pack()
+            yes_option = Radiobutton(status_frame, text="Yes", variable=var, value= 1)
+            yes_option.pack()
+            no_option = Radiobutton(status_frame, text="No", variable=var, value= 0)
+            no_option.pack()
             answers.append(var)
 
         def submit_status():
-            self.fuel = answers[0].get()
-            self.engines = answers[1].get()
-            self.lights = answers[2].get()
-            self.collisionLights = answers[3].get()
-            self.rudders = answers[4].get()
-            self.hydraulicsSystem = answers[5].get()
+            self.fuel = answers[0].get() == 1
+            self.engines = answers[1].get() == 1
+            self.lights = answers[2].get() == 1
+            self.collisionLights = answers[3].get() == 1
+            self.rudders = answers[4].get() == 1
+            self.hydraulicsSystem = answers[5].get() == 1
 
-            if all(answers):
+            if all(answer.get() != 0 for answer in answers):
                 print('Wait for the verification process...')
                 time.sleep(2)
                 print("Success!!!")
@@ -124,7 +133,9 @@ class Scenario(Pilot, Aircraft):
                 self.LaunchSequence_info()
             else:
                 print("Error: Security check failed")
-                raise SystemExit
+                root.destroy()
+                time.sleep(1)
+                self.SetStatusAircraft()
 
         submit_button = Button(root, text="Submit", command=submit_status)
         submit_button.pack()
@@ -133,7 +144,7 @@ class Scenario(Pilot, Aircraft):
 
     def LaunchSequence_info(self):
         root = Tk()
-        root.title("Launch Sequence Info")
+        root.title("Launch sequence info")
         root.geometry("400x300")
 
         info_frame = Frame(root)
@@ -192,40 +203,72 @@ class Scenario(Pilot, Aircraft):
 
 
     def LaunchSequence_collisionLights(self):
+        root = Tk()
+        root.title("Launch sequence - collision lights")
+        root.geometry("400x300")
+
+        info_frame = Frame(root)
+        info_frame.pack(pady=20)
+
+        question_label = Label(info_frame, text="We need to let everyone around us know that we are starting the launch "
+                                                "sequence. What do we need to do?")
+        question_label.pack()
+
         options = {
             "1": "Including engines",
             "2": "Turn on blinking collision lights",
             "3": "Hide the landing gear of the aircraft"
         }
 
-        current_answer = "Turn on blinking collision lights"
-        user_choice = input(
-            "We need to let everyone around us know that we are starting the launch sequence. What do we need to do?\n1. "
-            "Including engines\n2. Turn on blinking collision lights\n3. Hide the landing gear of the aircraft"
-            "\nSelect the option: "
-        ).strip().lower()
+        current_answer = ["Turn on blinking collision lights"]
 
-        if user_choice in options:
-            if options[user_choice] == current_answer:
-                #time.sleep(2)
-                print("That's right, I turn on the collision lights. They appear to be blinking. ")
-                print('-'*100)
-                #time.sleep(2)
-                self.LaunchSequence_engines()
+        var1 = BooleanVar()
+        options1 = Checkbutton(info_frame, text=options["1"], variable=var1)
+        options1.pack()
+
+        var2 = BooleanVar()
+        options2 = Checkbutton(info_frame, text=options["2"], variable=var2)
+        options2.pack()
+
+        var3 = BooleanVar()
+        options1 = Checkbutton(info_frame, text=options["3"], variable=var3)
+        options1.pack()
+
+        def submit_info():
+            choice = []
+
+            if var1.get():
+                choice.append(options["1"])
+            if var2.get():
+                choice.append(options["2"])
+            if var3.get():
+                choice.append(options["3"])
+
+            if choice == current_answer:
+                    #time.sleep(2)
+                    print("That's right, I turn on the collision lights. They appear to be blinking. ")
+                    print('-'*100)
+                    root.destroy()
+                    #time.sleep(2)
+                    self.LaunchSequence_engines()
+            elif choice:
+                    print("Wrong answer!!!")
+                    #time.sleep(2)
+                    print("Let's try again")
+                    print('*'*100)
+                    root.destroy()
+                    #time.sleep(2)
+                    self.LaunchSequence_collisionLights()
             else:
-                print("Wrong answer!!!")
+                print("Incorrect selection option!!!")
                 #time.sleep(2)
                 print("Let's try again")
-                print('*'*100)
+                print('*' * 100)
                 #time.sleep(2)
                 self.LaunchSequence_collisionLights()
-        else:
-            print("Incorrect selection option!!!")
-            #time.sleep(2)
-            print("Let's try again")
-            print('*' * 100)
-            #time.sleep(2)
-            self.LaunchSequence_collisionLights()
+
+        submit_button = Button(root, text="Submit", command= submit_info)
+        submit_button.pack()
 
 
     def LaunchSequence_engines(self):

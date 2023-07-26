@@ -1,39 +1,37 @@
-import sys
-import os
-import time
 import random
-
-from Pilot import Pilot
-from Aircraft import Aircraft
+import time
 from tkinter import *
 
-class Scenario(Pilot, Aircraft):
+from Aircraft import Aircraft
+from Pilot import Pilot
 
+
+class Scenario(Pilot, Aircraft):
     directions = ["Warsaw", "Baghdad", "Tokyo", "Sydney"]
     weather = ["Storm", "Sunny"]
 
-
-    def __init__(self, healthy, rested, full, calm, focus, fuel, engines, lights, collisionLights, rudders, hydraulicsSystem):
+    def __init__(self, healthy, rested, full, calm, focus, fuel, engines, lights, collisionLights, rudders,
+                 hydraulicsSystem):
         Pilot.__init__(self, healthy, rested, full, calm, focus)
         Aircraft.__init__(self, fuel, engines, lights, collisionLights, rudders, hydraulicsSystem)
         self.scenario_inputsPilot = []
         self.scenario_inputsAircraft = []
         self.city = self.random_direction()
-
+        self.error_count = 0
 
     def RunScenario(self):
         print('Hi')
-        #time.sleep(2)
+        # time.sleep(2)
         print('I am your on-board computer')
-        #time.sleep(5)
+        # time.sleep(5)
         print('Today is: {}'.format(time.strftime("%d/%m/%Y, %H:%M", time.localtime())))
-        #time.sleep(4)
+        # time.sleep(4)
         print('We are going to {}'.format(self.city))
-        #time.sleep(2)
+        # time.sleep(2)
         print("Today's weather is: {}".format(self.random_weather()))
-        #time.sleep(3)
+        # time.sleep(3)
         print('Lets prepare you for the flight, for this purpose I have to ask you a few questions')
-        #time.sleep(5)
+        # time.sleep(5)
         print('Remember, the answers are only True or False')
 
         self.SetStatusPilot()
@@ -110,9 +108,9 @@ class Scenario(Pilot, Aircraft):
             var.set(-1)
             question_label = Label(status_frame, text=questions[i])
             question_label.pack()
-            yes_option = Radiobutton(status_frame, text="Yes", variable=var, value= 1)
+            yes_option = Radiobutton(status_frame, text="Yes", variable=var, value=1)
             yes_option.pack()
-            no_option = Radiobutton(status_frame, text="No", variable=var, value= 0)
+            no_option = Radiobutton(status_frame, text="No", variable=var, value=0)
             no_option.pack()
             answers.append(var)
 
@@ -201,7 +199,6 @@ class Scenario(Pilot, Aircraft):
 
         root.mainloop()
 
-
     def LaunchSequence_collisionLights(self):
         root = Tk()
         root.title("Launch sequence - collision lights")
@@ -210,8 +207,9 @@ class Scenario(Pilot, Aircraft):
         info_frame = Frame(root)
         info_frame.pack(pady=20)
 
-        question_label = Label(info_frame, text="We need to let everyone around us know that we are starting the launch "
-                                                "sequence. What do we need to do?")
+        question_label = Label(info_frame,
+                               text="We need to let everyone around us know that we are starting the launch "
+                                    "sequence. What do we need to do?")
         question_label.pack()
 
         options = {
@@ -245,78 +243,112 @@ class Scenario(Pilot, Aircraft):
                 choice.append(options["3"])
 
             if choice == current_answer:
-                    #time.sleep(2)
-                    print("That's right, I turn on the collision lights. They appear to be blinking. ")
-                    print('-'*100)
-                    root.destroy()
-                    #time.sleep(2)
-                    self.LaunchSequence_engines()
+                # time.sleep(2)
+                print("That's right, I turn on the collision lights. They appear to be blinking. ")
+                print('-' * 100)
+                root.destroy()
+                # time.sleep(2)
+                self.LaunchSequence_engines()
             elif choice:
-                    print("Wrong answer!!!")
-                    #time.sleep(2)
-                    print("Let's try again")
-                    print('*'*100)
-                    root.destroy()
-                    #time.sleep(2)
-                    self.LaunchSequence_collisionLights()
-            else:
-                print("Incorrect selection option!!!")
-                #time.sleep(2)
+                print("Wrong answer!!!")
+                # time.sleep(2)
                 print("Let's try again")
                 print('*' * 100)
-                #time.sleep(2)
+                root.destroy()
+                # time.sleep(2)
+                self.LaunchSequence_collisionLights()
+            else:
+                print("Incorrect selection option!!!")
+                # time.sleep(2)
+                print("Let's try again")
+                print('*' * 100)
+                # time.sleep(2)
+                root.destroy()
                 self.LaunchSequence_collisionLights()
 
-        submit_button = Button(root, text="Submit", command= submit_info)
+        submit_button = Button(root, text="Submit", command=submit_info)
         submit_button.pack()
 
-
     def LaunchSequence_engines(self):
+        root = Tk()
+        root.title("Lunch sequence engines")
+        root.geometry("400x300")
+
+        info_frame = Frame(root)
+        info_frame.pack(pady=20)
+
+        question_label = Label(info_frame, text="We need to generate the thrust needed to get the plane up."
+                                                " What do we need to do?")
+        question_label.pack()
+
         options = {
             "1": "Refuel the aircraft",
             "2": "Open the luggage compartment",
             "3": "Turn on the engines one at a time"
         }
+        current_answer = ["Turn on the engines one at a time"]
 
-        current_answer = "Turn on the engines one at a time"
-        user_choice = input(
-            "We need to generate the thrust needed to get the plane up. What do we need to do?\n1. "
-            "Refuel the aircraft\n2. Open the luggage compartment\n3. Turn on the engines one at a time\n"
-            "Select the option: ").strip().lower()
+        var1 = BooleanVar()
+        option1 = Checkbutton(info_frame, text=options["1"], variable=var1)
+        option1.pack()
 
-        if user_choice in options:
-            if options[user_choice] == current_answer:
-                #time.sleep(2)
+        var2 = BooleanVar()
+        option2 = Checkbutton(info_frame, text=options["2"], variable=var2)
+        option2.pack()
+
+        var3 = BooleanVar()
+        option3 = Checkbutton(info_frame, text=options["3"], variable=var3)
+        option3.pack()
+
+        def submit_info():
+
+            choice = []
+
+            if var1.get():
+                choice.append(options["1"])
+            if var2.get():
+                choice.append(options["2"])
+            if var3.get():
+                choice.append(options["3"])
+
+            if choice == current_answer:
+                # time.sleep(2)
                 print("Of course, I'm starting to run engine #1")
-                #time.sleep(4)
+                # time.sleep(4)
                 print("Engine #1 has warmed up, I am starting to start engine #2")
-                #time.sleep(2)
-                print("-"*100)
-                #time.sleep(4)
+                # time.sleep(2)
+                print("-" * 100)
+                # time.sleep(4)
                 print("Pilot, we are now taxiing...")
-                #time.sleep(4)
+                # time.sleep(4)
                 print("We are gaining launch speed...")
-                #time.sleep(3)
+                # time.sleep(3)
                 print("Pilot, the plane's takeoff was successful, I'm taking a course to {}".format(self.city))
-                print('-'*100)
+                print('-' * 100)
                 print('(AT THIS STAGE AN ERROR COUNTER IS INTRODUCED, THINK TWICE BEFORE GIVING YOUR ANSWER)')
-                print('-'*100)
+                print('-' * 100)
+                root.destroy()
                 self.Directions()
 
-            else:
+            elif choice:
                 print("Wrong answer!!!")
-                #time.sleep(2)
+                # time.sleep(2)
                 print("Let's try again")
                 print('*' * 100)
-                #time.sleep(2)
+                # time.sleep(2)
+                root.destroy()
                 self.LaunchSequence_engines()
-        else:
-            print("Incorrect selection option!!!")
-            #time.sleep(2)
-            print("Let's try again")
-            print('*' * 100)
-            #time.sleep(2)
-            self.LaunchSequence_engines()
+            else:
+                print("Incorrect selection option!!!")
+                # time.sleep(2)
+                print("Let's try again")
+                print('*' * 100)
+                # time.sleep(2)
+                root.destroy()
+                self.LaunchSequence_engines()
+
+        submit_button = Button(root, text="submit", command=submit_info)
+        submit_button.pack()
 
     def Directions(self):
         continue_execution = True
@@ -467,7 +499,7 @@ class Scenario(Pilot, Aircraft):
                     "2": "We ignore the pilots calculations and land according to the computer's calculations at the "
                          "nearest airport",
                     "3": "We inform passengers that we will all die"
-               }
+                }
                 current_answer = "We're landing on the water, and notify the air traffic control tower of the decision " \
                                  "taken"
 
@@ -507,13 +539,3 @@ class Scenario(Pilot, Aircraft):
                     print("Incorrect selection option!!!")
                     print("Let's try again.")
                     print('-' * 100)
-
-
-
-
-
-
-
-
-
-
